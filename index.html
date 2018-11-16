@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>Display a map</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+
+<body>
+  <div id='map'></div>
+
+  <div id='console'>
+    <h1>Sustainable Stanford: A Map of Progress</h1>
+    <p>Data: <a href='https://sustainable.stanford.edu/buildings'>Sustainability Performance</a> in Stanford, 2017-2018</p>
+    <p>* Click each marker for a more detailed breakdown of progress ratings</p>
+
+    <div class='session'>
+      <h2>Sustainability Progress Rating</h2>
+      <div class='row colors'>
+      </div>
+      <div class='row labels'>
+        <div class='label'>50</div>
+        <div class='label'>55</div>
+        <div class='label'>60</div>
+        <div class='label'>65</div>
+        <div class='label'>70</div>
+        <div class='label'>75+</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZ2FldW5raW0iLCJhIjoiY2puNzEwOGUyMDVqajNscGJyYW50a2g4cCJ9.VGjVvHY0iDLwrzDaswNh9g';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/gaeunkim/cjohotxco0yn02smp2dbg466i',
+      center: [-122.169998, 37.427836],
+      zoom: 15
+    });
+
+    map.on('click', function(e) {
+      var features = map.queryRenderedFeatures(e.point, {
+        layers: ['testdata']
+      });
+
+      if (!features.length) {
+        return;
+      }
+
+      var feature = features[0];
+
+      var popup = new mapboxgl.Popup({ offset: [0, -15] })
+      .setLngLat(feature.geometry.coordinates)
+      .setHTML('<h3>' + feature.properties.Name + '</h3><p>' + 'Overall rating: ' + feature.properties.Overall + '%' + '</p>' + '<p>' + 'Energy use rating: ' + feature.properties.Energy + '%' + '</p>' + '<p>' + 'Water use rating: ' + feature.properties.Water + '%' + '</p>' + '<p>' + 'Waste production rating: ' + feature.properties.Waste + '%' + '</p>')
+      .setLngLat(feature.geometry.coordinates)
+      .addTo(map);
+    });
+
+  </script>
+
+</body>
+</html>
